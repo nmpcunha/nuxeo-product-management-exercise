@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.onboarding.exercise.services.ProductService" version="1.0">
+
+    <implementation class="org.nuxeo.onboarding.exercise.services.ProductServiceImpl"/>
+
+    <service>
+        <provide interface="org.nuxeo.onboarding.exercise.services.ProductService"/>
+    </service>
+
+    <extension-point name="productPricing">
+        <documentation>
+            This extension can be used to register new product pricing services
+        </documentation>
+        <object class="org.nuxeo.onboarding.exercise.extension.ProductPricingDescriptor"/>
+    </extension-point>
+    <extension-point name="configuration">
+        <documentation>
+            This extension can be used to configure product service
+        </documentation>
+        <object class="org.nuxeo.onboarding.exercise.extension.GlobalConfigDescriptor"/>
+    </extension-point>
+
+</component>

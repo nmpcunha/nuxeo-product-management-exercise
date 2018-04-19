@@ -1,0 +1,12 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.nuxeo.onboarding.exercise
+Bundle-Version: 1.0.0
+Bundle-Name: product-project-core
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.nuxeo.onboarding.exercise.product-project-core;singleton=true
+Nuxeo-Component: OSGI-INF/services/productservice-service.xml,
+ OSGI-INF/operations/priceinflation-operation-contrib.xml,
+ OSGI-INF/adapters/nxproduct-adapter-contrib.xml,
+ OSGI-INF/listeners/deprecatedproductlistener-listener-contrib.xml

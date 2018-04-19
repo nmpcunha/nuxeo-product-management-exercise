@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.onboarding.exercise.events.listeners.deprecatedproduct">
+
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+    <listener name="deprecatedproduct"
+      class="org.nuxeo.onboarding.exercise.events.listeners.DeprecatedProductListener">
+        <event>product.deprecated</event>
+    </listener>
+  </extension>
+
+</component>
