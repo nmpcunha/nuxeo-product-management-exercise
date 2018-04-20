@@ -16,6 +16,7 @@
 
   <modules>
     <module>product-project-core</module>
+    <module>product-project-package</module>
   </modules>
 
   <repositories>
@@ -71,6 +72,11 @@
       <dependency>
         <groupId>org.nuxeo.onboarding.exercise</groupId>
         <artifactId>product-project-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.onboarding.exercise</groupId>
+        <artifactId>product-project-package</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
