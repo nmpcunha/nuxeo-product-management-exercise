@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.extension.ProductPricingDescriptor;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
@@ -18,7 +19,7 @@ public class ProductServiceImpl extends DefaultComponent implements ProductServi
     private static final Log log = LogFactory.getLog(ProductServiceImpl.class);
 
     private static final String NO_IDENTIFIER = "A Product Pricing Contribution arrived without identifier: %s";
-    private static final String NULL_DOCUMENT_ADAPTER = "A NULL Document Adapter was received. This means that the original Document Model's type was not 'Product'";
+    private static final String NULL_DOCUMENT_ADAPTER = "A NULL Document Adapter was received. This means that the original Document Model's type was not '%s'";
 
     private static final String CONTRIBUTION_LOADED = "The following contribution was loaded by Product Service: %s";
     private static final String CONTRIBUTION_UNLOADED = "The following contribution was unloaded by Product Service: %s";
@@ -77,7 +78,7 @@ public class ProductServiceImpl extends DefaultComponent implements ProductServi
     @Override
     public Double computePrice(NxProductAdapter product) throws NuxeoException {
         if (product == null) {
-            throw new NuxeoException(NULL_DOCUMENT_ADAPTER);
+            throw new NuxeoException(String.format(NULL_DOCUMENT_ADAPTER, ProductDocumentTypes.PRODUCT.getName()));
         }
 
         String country = product.getOriginOfFabrication();

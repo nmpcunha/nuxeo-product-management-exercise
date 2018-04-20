@@ -5,11 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.onboarding.exercise.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.extension.ProductPricingDescriptor;
 import org.nuxeo.onboarding.exercise.samples.SampleGenerator;
-import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.HotDeployer;
@@ -20,9 +19,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
-@Features(CoreFeature.class)
-@Deploy({"org.nuxeo.onboarding.exercise.product-project-core", "studio.extensions.ncunha-SANDBOX"})
-@Deploy("org.nuxeo.onboarding.exercise.product-project-core:OSGI-INF/test/worldtaxes-contrib.xml")
+@Features(OnboardingFeature.class)
 public class TestProductService {
 
     @Inject

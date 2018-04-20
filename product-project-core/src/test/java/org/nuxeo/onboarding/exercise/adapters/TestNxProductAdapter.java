@@ -2,17 +2,14 @@ package org.nuxeo.onboarding.exercise.adapters;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentNotFoundException;
-import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.ecm.core.test.CoreFeature;
+import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.onboarding.exercise.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
 import org.nuxeo.onboarding.exercise.samples.SampleGenerator;
-import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.LogCaptureFeature;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -21,24 +18,29 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
-@Features(CoreFeature.class)
-@Deploy({"org.nuxeo.ecm.platform.tag", "org.nuxeo.ecm.platform.collections.core"})
-@Deploy({"org.nuxeo.onboarding.exercise.product-project-core", "studio.extensions.ncunha-SANDBOX"})
+@Features(OnboardingFeature.class)
 public class TestNxProductAdapter {
 
     @Inject
     private CoreSession session;
 
+    @Inject
+    private LogCaptureFeature.Result logCaptureResult;
+
     @Test
-    public void shouldReturnNullWhenDocumentIsNotProduct() {
+    @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.adapters.NxProductAdapterFactory")
+    public void shouldReturnNullWhenDocumentIsNotProduct() throws LogCaptureFeature.NoLogCaptureFilterException {
         DocumentModel document = SampleGenerator.getFile(session);
         assertNull(document.getAdapter(NxProductAdapter.class));
+        logCaptureResult.assertHasEvent();
     }
 
     @Test
-    public void shouldReturnNullWhenDocumentInheritsProduct() {
+    @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.adapters.NxProductAdapterFactory")
+    public void shouldReturnNullWhenDocumentInheritsProduct() throws LogCaptureFeature.NoLogCaptureFilterException {
         DocumentModel document = session.createDocumentModel(ProductDocumentTypes.VISUAL.getName());
         assertNull(document.getAdapter(NxProductAdapter.class));
+        logCaptureResult.assertHasEvent();
     }
 
     @Test
@@ -49,15 +51,15 @@ public class TestNxProductAdapter {
         assertAdapterMatchesDocument(document, adapter);
     }
 
-    @Test()
-    public void shouldThrowExceptionWhenDocumentRefIsNull() {
+    @Test
+    public void shouldCreateDocumentWhenRefIsNull() {
         NxProductAdapter adapter = SampleGenerator.getUnreferencedProduct(session);
         adapter.create();
 
-        // It generates a guid ref which is not known by our object
+        assertTrue(session.exists(adapter.getDocumentModel().getRef()));
     }
 
-    @Test()
+    @Test
     public void shouldCreateDocumentWhenRefIsProvided() {
         NxProductAdapter adapter = SampleGenerator.getAsianProduct(session);
         adapter.create();
@@ -68,7 +70,6 @@ public class TestNxProductAdapter {
     @Test(expected = DocumentNotFoundException.class)
     public void shouldThrowExceptionWhenDocumentIsNotCreated() {
         SampleGenerator.getAsianProduct(session).save();
-
         // Should we just verify that the method is called?
     }
 
@@ -98,18 +99,17 @@ public class TestNxProductAdapter {
 
     @Test
     public void shouldStoreWhenTryingToAddVisualDocumentToCollection() {
-        NxProductAdapter product = SampleGenerator.getAsianProduct(session);
-        product.create();
-
         DocumentModel nxVisual = SampleGenerator.getVisual(session);
         session.createDocument(nxVisual);
+        nxVisual = session.saveDocument(nxVisual);
 
+        NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.addVisual(nxVisual);
 
-        List<DocumentModel> visuals = product.getVisuals();
+        List<DocumentRef> visuals = product.getVisuals();
         assertNotNull(visuals);
         assertEquals(1, visuals.size());
-        assertEquals(nxVisual, visuals.get(0));
+        assertEquals(nxVisual.getRef(), visuals.get(0));
     }
 
     private void assertAdapterMatchesDocument(DocumentModel document, NxProductAdapter adapter) {

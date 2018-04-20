@@ -1,49 +1,66 @@
 package org.nuxeo.onboarding.exercise.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.InvalidChainException;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
-import org.nuxeo.ecm.automation.test.AutomationFeature;
-import org.nuxeo.ecm.core.api.*;
-import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.automation.core.util.BlobList;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.api.impl.blob.JSONBlob;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
+import org.nuxeo.onboarding.exercise.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
-import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
 import org.nuxeo.onboarding.exercise.samples.SampleGenerator;
-import org.nuxeo.runtime.test.runner.Deploy;
+import org.nuxeo.onboarding.exercise.services.ProductService;
+import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
+import org.nuxeo.runtime.test.runner.LogCaptureFeature;
 
 import javax.inject.Inject;
-import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(FeaturesRunner.class)
-@Features(AutomationFeature.class)
+@Features(OnboardingFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
-@Deploy({"org.nuxeo.onboarding.exercise.product-project-core", "studio.extensions.ncunha-SANDBOX"})
 public class TestPriceInflation {
 
     private static final Double INFLATION_RATE = 0.10;
 
     @Inject
-    protected CoreSession session;
+    private CoreSession session;
 
     @Inject
-    protected AutomationService automationService;
+    private AutomationService automationService;
+
+    @Inject
+    private LogCaptureFeature.Result logCaptureResult;
+
+    @Mock
+    @RuntimeService
+    private ProductService productService;
+
+    @Before
+    public void setup() {
+        when(productService.computePrice(null)).thenThrow(new NuxeoException());
+    }
 
     @Test(expected = OperationException.class)
     public void shouldThrowExceptionWhenNoParamsPassed() throws OperationException {
@@ -67,14 +84,14 @@ public class TestPriceInflation {
     @Test(expected = InvalidChainException.class)
     public void shouldThrowExceptionWhenBlobInput() throws OperationException {
         OperationContext ctx = new OperationContext(session);
-        ctx.setInput(Mockito.any(Blob.class));
+        ctx.setInput(new JSONBlob(""));
         automationService.run(ctx, PriceInflation.ID, getParams());
     }
 
     @Test(expected = InvalidChainException.class)
     public void shouldThrowExceptionWhenBlobListInput() throws OperationException {
         OperationContext ctx = new OperationContext(session);
-        ctx.setInput(Mockito.anyListOf(Blob.class));
+        ctx.setInput(new BlobList(new JSONBlob(""))); // Why BlobList extends ArrayList?
         automationService.run(ctx, PriceInflation.ID, getParams());
     }
 
@@ -83,8 +100,6 @@ public class TestPriceInflation {
         OperationContext ctx = new OperationContext(session);
         ctx.setInput(SampleGenerator.getFile(session));
         automationService.run(ctx, PriceInflation.ID, getParams());
-
-        // Since it is already test on ProductService, should we just verify that the service is called?
     }
 
     @Test
@@ -95,10 +110,9 @@ public class TestPriceInflation {
         OperationContext ctx = new OperationContext(session);
         ctx.setInput(productAdapter.getDocumentModel());
 
-        DocumentModel doc = (DocumentModel) automationService.run(ctx, PriceInflation.ID, getParams());
+        automationService.run(ctx, PriceInflation.ID, getParams());
 
-        // Could we use BigDecimal instead of Double?
-        assertEquals(new DecimalFormat("####0.00").format(495.00), new DecimalFormat("####0.00").format(doc.getPropertyValue(NxProduct.PRICE.getPropertyXPath())));
+        verify(productService).computePrice(productAdapter.getDocumentModel().getAdapter(NxProductAdapter.class));
     }
 
     @Test
@@ -111,19 +125,24 @@ public class TestPriceInflation {
         NxProductAdapter americanProduct = SampleGenerator.getAmericanProduct(session);
         americanProduct.create();
 
-        DocumentModelList products = new DocumentModelListImpl(Arrays.asList(asianProduct.getDocumentModel(), americanProduct.getDocumentModel()));
-        ctx.setInput(products);
-
+        ctx.setInput(Arrays.asList(asianProduct.getDocumentModel(), americanProduct.getDocumentModel()));
         DocumentModelList docs = (DocumentModelList) automationService.run(ctx, PriceInflation.ID, getParams());
 
-        for (DocumentModel doc: docs) {
+        for (DocumentModel doc : docs) {
             assertEquals(ProductDocumentTypes.PRODUCT.getName(), doc.getDocumentType().getName());
-
+            verify(productService).computePrice(doc.getAdapter(NxProductAdapter.class));
         }
+    }
 
-        //TODO Assert Each Document for price inflation
-        fail();
+    @Test
+    @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.operations.PriceInflation")
+    public void shouldLogWhenListContainsInvalidDocumentTypes() throws OperationException, LogCaptureFeature.NoLogCaptureFilterException {
+        OperationContext ctx = new OperationContext(session);
 
+        ctx.setInput(Collections.singletonList(SampleGenerator.getVisual(session)));
+        automationService.run(ctx, PriceInflation.ID, getParams());
+
+        logCaptureResult.assertHasEvent();
     }
 
     private Map<String, Object> getParams() {
