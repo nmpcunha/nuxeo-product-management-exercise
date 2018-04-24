@@ -1,6 +1,5 @@
 package org.nuxeo.onboarding.exercise.services;
 
-import com.google.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -13,6 +12,7 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.HotDeployer;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.instanceOf;

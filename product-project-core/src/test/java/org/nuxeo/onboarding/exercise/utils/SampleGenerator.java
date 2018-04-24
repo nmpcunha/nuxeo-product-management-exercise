@@ -60,7 +60,7 @@ public class SampleGenerator {
     }
 
     public static NxProductAdapter getEuropeanProduct(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/", "epn", ProductDocumentTypes.PRODUCT.getName());
+        DocumentModel doc = coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "epn", ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
         product.setTitle("Sample European Product");
@@ -100,6 +100,10 @@ public class SampleGenerator {
     }
 
     public static DocumentModel getFile(CoreSession coreSession) {
-        return coreSession.createDocumentModel("File");
+        return coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace","sampleFile", "File");
+    }
+
+    public static DocumentModel getWorkspace(CoreSession coreSession){
+        return coreSession.createDocumentModel("/default-domain/workspaces/", "sampleWorkspace", "Workspace");
     }
 }

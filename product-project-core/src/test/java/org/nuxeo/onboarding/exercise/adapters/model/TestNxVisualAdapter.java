@@ -9,8 +9,10 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
 import javax.inject.Inject;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(FeaturesRunner.class)
 @Features(OnboardingFeature.class)
@@ -21,26 +23,32 @@ public class TestNxVisualAdapter {
 
     @Test
     public void shouldReturnNullWhenVisualIsNotAssociatedToProductCollection() {
-        NxVisualAdapter nxVisual = SampleGenerator.getVisual(session);
-        nxVisual.create();
-        nxVisual.save();
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+        visual.save();
 
-        assertNull(nxVisual.getCorrespondingProduct());
+        List<NxProductAdapter> correspondingProducts = visual.getCorrespondingProducts();
+
+        assertNotNull(correspondingProducts);
+        assertEquals(0, correspondingProducts.size());
     }
 
     @Test
     public void shouldStoreWhenTryingToAddVisualDocumentToCollection() {
-        NxVisualAdapter nxVisual = SampleGenerator.getVisual(session);
-        nxVisual.create();
-        nxVisual.save();
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
-        product.addVisual(nxVisual);
+        product.create();
+        product.save();
+        product.addVisual(visual);
 
-        NxProductAdapter correspondingProduct = nxVisual.getCorrespondingProduct();
+        List<NxProductAdapter> correspondingProducts = visual.getCorrespondingProducts();
 
-        assertNotNull(correspondingProduct);
-        assertEquals(product, correspondingProduct);
+        assertNotNull(correspondingProducts);
+        assertEquals(1, correspondingProducts.size());
+        assertEquals(product.getId(), correspondingProducts.get(0).getId());
     }
 
 }

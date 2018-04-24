@@ -1,6 +1,5 @@
 package org.nuxeo.onboarding.exercise.events.listeners;
 
-import com.google.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,7 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,9 +67,9 @@ public class TestDeprecatedProductListener {
         visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
-        product.addVisual(visual);
         product.create();
         product.save();
+        product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
@@ -89,9 +89,9 @@ public class TestDeprecatedProductListener {
         visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
-        product.addVisual(visual);
         product.create();
         product.save();
+        product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
@@ -132,9 +132,9 @@ public class TestDeprecatedProductListener {
         visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
-        product.addVisual(visual);
         product.create();
         product.save();
+        product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));

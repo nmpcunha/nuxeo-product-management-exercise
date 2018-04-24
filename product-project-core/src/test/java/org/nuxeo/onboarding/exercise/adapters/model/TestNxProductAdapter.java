@@ -77,6 +77,8 @@ public class TestNxProductAdapter {
         nxVisual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
+        product.create();
+        product.save();
         product.addVisual(nxVisual);
 
         List<DocumentRef> visuals = product.getVisuals();
