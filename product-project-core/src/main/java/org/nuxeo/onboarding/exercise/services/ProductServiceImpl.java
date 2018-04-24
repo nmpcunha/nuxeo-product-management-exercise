@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.extension.ProductPricingDescriptor;
 import org.nuxeo.runtime.model.ComponentContext;

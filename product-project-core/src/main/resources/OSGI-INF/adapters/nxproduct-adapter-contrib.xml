@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.onboarding.exercise.adapters.nxproduct">
 
-  <extension target="org.nuxeo.ecm.core.api.DocumentAdapterService" point="adapters">
-    <adapter class="org.nuxeo.onboarding.exercise.adapters.NxProductAdapter" factory="org.nuxeo.onboarding.exercise.adapters.NxProductAdapterFactory"/>
-  </extension>
+    <extension target="org.nuxeo.ecm.core.api.DocumentAdapterService" point="adapters">
+        <adapter class="org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter"
+                 factory="org.nuxeo.onboarding.exercise.adapters.NxProductAdapterFactory"/>
+        <adapter class="org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter"
+                 factory="org.nuxeo.onboarding.exercise.adapters.NxProductAdapterFactory"/>
+    </extension>
 
 </component>

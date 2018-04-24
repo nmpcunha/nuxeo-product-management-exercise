@@ -9,7 +9,7 @@ import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 
 import java.util.List;

@@ -17,10 +17,10 @@ import org.nuxeo.ecm.core.api.impl.blob.JSONBlob;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
-import org.nuxeo.onboarding.exercise.OnboardingFeature;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
-import org.nuxeo.onboarding.exercise.samples.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.onboarding.exercise.services.ProductService;
 import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
@@ -139,7 +139,7 @@ public class TestPriceInflation {
     public void shouldLogWhenListContainsInvalidDocumentTypes() throws OperationException, LogCaptureFeature.NoLogCaptureFilterException {
         OperationContext ctx = new OperationContext(session);
 
-        ctx.setInput(Collections.singletonList(SampleGenerator.getVisual(session)));
+        ctx.setInput(Collections.singletonList(SampleGenerator.getVisual(session).getDocumentModel()));
         automationService.run(ctx, PriceInflation.ID, getParams());
 
         logCaptureResult.assertHasEvent();

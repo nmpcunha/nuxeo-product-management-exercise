@@ -1,12 +1,11 @@
 package org.nuxeo.onboarding.exercise.rest;
 
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentNotFoundException;
-import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.core.api.NuxeoException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.webengine.model.WebObject;
 import org.nuxeo.ecm.webengine.model.impl.ModuleRoot;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.services.ProductService;
 import org.nuxeo.runtime.api.Framework;
 
@@ -21,7 +20,11 @@ import javax.ws.rs.core.Response;
 @Path("product")
 public class ProductController extends ModuleRoot {
 
+    private static final Log log = LogFactory.getLog(ProductController.class);
+
     static final String DOCUMENT_NOT_FOUND = "The document received as an argument does not exist in Nuxeo Platform.";
+
+    private final String WORKSPACES_PATH = "/default-domain/workspaces/%s/%s";
 
     private final ProductService productService;
 
@@ -37,11 +40,23 @@ public class ProductController extends ModuleRoot {
     @GET
     @Path("price/{productId}")
     public Response getProductPrice(@PathParam("productId") String productId) {
-        if (!getContext().getCoreSession().exists(new IdRef(productId))) {
+        DocumentRef ref = new IdRef(productId);
+        return getProductDocumentByRef(ref);
+    }
+
+    @GET
+    @Path("price/{workspace}/{productRef}")
+    public Response getProductPrice(@PathParam("workspace") String workspace, @PathParam("productRef") String productRef) {
+        DocumentRef ref = new PathRef(String.format(WORKSPACES_PATH, workspace, productRef));
+        return getProductDocumentByRef(ref);
+    }
+
+    private Response getProductDocumentByRef(DocumentRef ref){
+        if (!getContext().getCoreSession().exists(ref)) {
             return Response.status(Response.Status.NOT_FOUND).entity(DOCUMENT_NOT_FOUND).build();
         }
 
-        DocumentModel product = ctx.getCoreSession().getDocument(new IdRef(productId));
+        DocumentModel product = getContext().getCoreSession().getDocument(ref);
         Double price;
         try {
             price = productService.computePrice(product.getAdapter(NxProductAdapter.class));
@@ -49,8 +64,7 @@ public class ProductController extends ModuleRoot {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
 
-        return Response.ok(price).build();
+        return Response.ok(price.toString()).build();
     }
-
 }
 

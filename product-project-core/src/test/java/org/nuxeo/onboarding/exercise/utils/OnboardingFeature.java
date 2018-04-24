@@ -1,4 +1,4 @@
-package org.nuxeo.onboarding.exercise;
+package org.nuxeo.onboarding.exercise.utils;
 
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.runtime.mockito.MockitoFeature;

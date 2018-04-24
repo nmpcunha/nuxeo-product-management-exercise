@@ -12,10 +12,11 @@ import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.event.impl.EventListenerDescriptor;
 import org.nuxeo.ecm.core.storage.sql.coremodel.SQLSession;
 import org.nuxeo.ecm.platform.usermanager.UserManager;
-import org.nuxeo.onboarding.exercise.OnboardingFeature;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
+import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.events.ProductEvents;
-import org.nuxeo.onboarding.exercise.samples.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -61,9 +62,9 @@ public class TestDeprecatedProductListener {
 
     @Test
     public void shouldMoveVisualsWhenDocumentIsProduct() {
-        DocumentModel visual = SampleGenerator.getVisual(session);
-        session.createDocument(visual);
-        visual = session.saveDocument(visual);
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.addVisual(visual);
@@ -83,9 +84,9 @@ public class TestDeprecatedProductListener {
 
     @Test
     public void shouldAccessFolderWhenAuthorized() {
-        DocumentModel visual = SampleGenerator.getVisual(session);
-        session.createDocument(visual);
-        visual = session.saveDocument(visual);
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.addVisual(visual);
@@ -126,9 +127,9 @@ public class TestDeprecatedProductListener {
 
     @Test(expected = DocumentSecurityException.class)
     public void shouldThrowExceptionWhenTryingToAccessFolderWithUnauthorizedUsers() {
-        DocumentModel visual = SampleGenerator.getVisual(session);
-        session.createDocument(visual);
-        visual = session.saveDocument(visual);
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.addVisual(visual);

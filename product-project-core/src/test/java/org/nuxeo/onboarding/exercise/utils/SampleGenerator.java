@@ -1,9 +1,15 @@
-package org.nuxeo.onboarding.exercise.samples;
+package org.nuxeo.onboarding.exercise.utils;
 
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.onboarding.exercise.adapters.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
+import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
+import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SampleGenerator {
 
@@ -11,10 +17,15 @@ public class SampleGenerator {
         DocumentModel doc = coreSession.createDocumentModel("/", "apn", ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
+        Map<String, Serializable> distributor = new HashMap<>();
+        distributor.put(NxProduct.DISTRIBUTOR_NAME.getPropertyKey(), "Jackie Chan");
+        distributor.put(NxProduct.DISTRIBUTOR_SELL_LOCATION.getPropertyKey(), "China");
+
         product.setTitle("Sample Asian Product");
         product.setImmediateAvailability(true);
         product.setCategory("interior");
         product.setDeliveryTime(10L);
+        product.setDistributor(distributor);
         product.setProductDescription("a very interesting product");
         product.setProductName("asian product name");
         product.setOriginOfFabrication("Thailand");
@@ -29,10 +40,15 @@ public class SampleGenerator {
         DocumentModel doc = coreSession.createDocumentModel("/", "upn", ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
+        Map<String, Serializable> distributor = new HashMap<>();
+        distributor.put(NxProduct.DISTRIBUTOR_NAME.getPropertyKey(), "Donald Trump");
+        distributor.put(NxProduct.DISTRIBUTOR_SELL_LOCATION.getPropertyKey(), "USA");
+
         product.setTitle("Sample American Product");
         product.setImmediateAvailability(true);
         product.setCategory("interior");
         product.setDeliveryTime(15L);
+        product.setDistributor(distributor);
         product.setProductDescription("a very interesting product");
         product.setProductName("american product name");
         product.setOriginOfFabrication("USA");
@@ -61,7 +77,7 @@ public class SampleGenerator {
         return product;
     }
 
-    public static NxProductAdapter getUnreferencedProduct(CoreSession coreSession){
+    public static NxProductAdapter getUnreferencedProduct(CoreSession coreSession) {
         DocumentModel doc = coreSession.createDocumentModel(ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
@@ -72,14 +88,15 @@ public class SampleGenerator {
         return product;
     }
 
-    public static DocumentModel getVisual(CoreSession coreSession) {
+    public static NxVisualAdapter getVisual(CoreSession coreSession) {
         DocumentModel doc = coreSession.createDocumentModel("/", "visual", ProductDocumentTypes.VISUAL.getName());
+        NxVisualAdapter visual = doc.getAdapter(NxVisualAdapter.class);
 
-        doc.setPropertyValue("dc:title", "A Visual");
-        doc.setPropertyValue("product:name", "A Sample Visual");
-        doc.setPropertyValue("product:category", "interior");
+        visual.setTitle("Visual Product");
+        visual.setCategory("interior");
+        visual.setProductName("Visual Product Name");
 
-        return doc;
+        return visual;
     }
 
     public static DocumentModel getFile(CoreSession coreSession) {
