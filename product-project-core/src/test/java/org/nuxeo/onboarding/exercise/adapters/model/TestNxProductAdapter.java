@@ -2,9 +2,12 @@ package org.nuxeo.onboarding.exercise.adapters.model;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nuxeo.ecm.core.api.*;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.ecm.core.api.CoreSession;
+import org.nuxeo.ecm.core.api.DocumentNotFoundException;
+import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
+import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -16,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(FeaturesRunner.class)
 @Features(OnboardingFeature.class)
@@ -64,10 +68,7 @@ public class TestNxProductAdapter {
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
 
-        DocumentModel file = SampleGenerator.getFile(session);
-        session.createDocument(file);
-
-        product.addVisual(file.getAdapter(NxVisualAdapter.class));
+        product.addVisual(null);
     }
 
     @Test
@@ -88,7 +89,7 @@ public class TestNxProductAdapter {
     }
 
     @Test
-    public void shouldBeAbleToSetAndGetComplexProperty(){
+    public void shouldBeAbleToSetAndGetComplexProperty() {
         NxProductAdapter europeanProduct = SampleGenerator.getEuropeanProduct(session);
 
         Map<String, Serializable> distributor = new HashMap<>();

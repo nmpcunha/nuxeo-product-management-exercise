@@ -19,11 +19,11 @@ public class NxProductAdapterFactory implements DocumentAdapterFactory {
     public Object getAdapter(DocumentModel doc, Class<?> itf) {
         if (ProductDocumentTypes.PRODUCT.getName().equals(doc.getType())
                 && NxProductAdapter.class.equals(itf)
-                && doc.hasSchema("dublincore") && doc.hasSchema(ProductSchemas.PRODUCT.getName())) {
+                && doc.hasSchema(ProductSchemas.DUBLIN_CORE.getName()) && doc.hasSchema(ProductSchemas.PRODUCT.getName())) {
             return new NxProductAdapter(doc);
         } else if (ProductDocumentTypes.VISUAL.getName().equals(doc.getType())
                 && NxVisualAdapter.class.equals(itf)
-                && doc.hasSchema("dublincore") && doc.hasSchema(ProductSchemas.PRODUCT.getName())) {
+                && doc.hasSchema(ProductSchemas.DUBLIN_CORE.getName()) && doc.hasSchema(ProductSchemas.PRODUCT.getName())) {
             return new NxVisualAdapter(doc);
         } else {
             log.warn(String.format(MISMATCHING_TYPE, doc.getDocumentType().getName(), ProductDocumentTypes.PRODUCT.getName()));

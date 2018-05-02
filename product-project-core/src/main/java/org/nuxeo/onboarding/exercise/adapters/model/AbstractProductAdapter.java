@@ -1,7 +1,6 @@
 package org.nuxeo.onboarding.exercise.adapters.model;
 
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.onboarding.exercise.adapters.AbstractDocumentAdapter;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
 
@@ -86,11 +85,11 @@ public abstract class AbstractProductAdapter extends AbstractDocumentAdapter {
         getDocumentModel().setPropertyValue(NxProduct.SIZE.getPropertyXPath(), size);
     }
 
-    public Map<String, Serializable> getDistributor(){
+    public Map<String, Serializable> getDistributor() {
         return (Map<String, Serializable>) getDocumentModel().getPropertyValue(NxProduct.DISTRIBUTOR.getPropertyXPath());
     }
 
-    public void setDistributor(Map<String, Serializable> distributor){
+    public void setDistributor(Map<String, Serializable> distributor) {
         getDocumentModel().setPropertyValue(NxProduct.DISTRIBUTOR.getPropertyXPath(), (Serializable) distributor);
     }
 }

@@ -100,10 +100,10 @@ public class SampleGenerator {
     }
 
     public static DocumentModel getFile(CoreSession coreSession) {
-        return coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace","sampleFile", "File");
+        return coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "sampleFile", "File");
     }
 
-    public static DocumentModel getWorkspace(CoreSession coreSession){
+    public static DocumentModel getWorkspace(CoreSession coreSession) {
         return coreSession.createDocumentModel("/default-domain/workspaces/", "sampleWorkspace", "Workspace");
     }
 }
