@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
-import org.nuxeo.onboarding.exercise.extension.ProductPricingDescriptor;
+import org.nuxeo.onboarding.exercise.extensions.ProductPricingDescriptor;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;

@@ -24,7 +24,7 @@ public class ProductController extends ModuleRoot {
 
     static final String DOCUMENT_NOT_FOUND = "The document received as an argument does not exist in Nuxeo Platform.";
 
-    static final String WORKSPACES_PATH = "/default-domain/workspaces/%s/%s";
+    static final String WORKSPACES_PATH = "default-domain/workspaces/%s/%s";
 
     private final ProductService productService;
 
@@ -59,7 +59,7 @@ public class ProductController extends ModuleRoot {
             Double price = productService.computePrice(product.getAdapter(NxProductAdapter.class));
             return Response.ok(Double.toString(price)).build();
         } catch (NuxeoException ex) {
-            log.debug(ex.getMessage());
+            log.warn(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
     }

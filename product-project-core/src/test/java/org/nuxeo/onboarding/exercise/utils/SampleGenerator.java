@@ -1,5 +1,8 @@
 package org.nuxeo.onboarding.exercise.utils;
 
+import org.nuxeo.common.utils.FileUtils;
+import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
@@ -7,6 +10,8 @@ import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,5 +110,10 @@ public class SampleGenerator {
 
     public static DocumentModel getWorkspace(CoreSession coreSession) {
         return coreSession.createDocumentModel("/default-domain/workspaces/", "sampleWorkspace", "Workspace");
+    }
+
+    public static Blob getPngBlob() throws IOException {
+        File sample = new File(FileUtils.getResourcePathFromContext("test-data/sample.png"));
+        return Blobs.createBlob(sample, "image/png");
     }
 }

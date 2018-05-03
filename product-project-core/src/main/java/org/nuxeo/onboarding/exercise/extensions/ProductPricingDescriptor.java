@@ -1,4 +1,4 @@
-package org.nuxeo.onboarding.exercise.extension;
+package org.nuxeo.onboarding.exercise.extensions;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XNodeList;
