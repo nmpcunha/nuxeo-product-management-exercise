@@ -24,7 +24,7 @@ public class ProductController extends ModuleRoot {
 
     static final String DOCUMENT_NOT_FOUND = "The document received as an argument does not exist in Nuxeo Platform.";
 
-    static final String WORKSPACES_PATH = "default-domain/workspaces/%s/%s";
+    private static final String WORKSPACES_PATH = "default-domain/workspaces/%s/%s";
 
     private final ProductService productService;
 

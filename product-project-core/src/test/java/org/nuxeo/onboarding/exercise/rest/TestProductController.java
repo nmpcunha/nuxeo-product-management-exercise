@@ -4,8 +4,10 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.restapi.test.RestServerFeature;
@@ -13,8 +15,10 @@ import org.nuxeo.jaxrs.test.CloseableClientResponse;
 import org.nuxeo.jaxrs.test.HttpClientTestRule;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
+import org.nuxeo.onboarding.exercise.services.ProductService;
 import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
+import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.Jetty;
@@ -26,6 +30,8 @@ import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 import static org.nuxeo.onboarding.exercise.rest.ProductController.DOCUMENT_NOT_FOUND;
 
 
@@ -43,6 +49,10 @@ public class TestProductController {
     @Inject
     private LogCaptureFeature.Result logCaptureResult;
 
+    @Mock
+    @RuntimeService
+    private ProductService productService;
+
     @Rule
     public HttpClientTestRule httpClientRule = new HttpClientTestRule.Builder()
             .adminCredentials()
@@ -59,6 +69,7 @@ public class TestProductController {
     @Test
     public void shouldReturnNotFoundWhenPassingNonexistentDocumentId() {
         try (CloseableClientResponse response = httpClientRule.get("price/nonexistentId")) {
+            verify(productService, never()).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.NOT_FOUND, DOCUMENT_NOT_FOUND);
         }
     }
@@ -73,7 +84,10 @@ public class TestProductController {
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
+        when(productService.computePrice(null)).thenThrow(new NuxeoException());
+
         try (CloseableClientResponse response = httpClientRule.get("price/" + visual.getId())) {
+            verify(productService).computePrice(null);
             assertResponse(response, Response.Status.BAD_REQUEST);
             logCaptureResult.assertHasEvent();
         }
@@ -88,7 +102,10 @@ public class TestProductController {
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
+        when(productService.computePrice(any(NxProductAdapter.class))).thenReturn(1.0);
+
         try (CloseableClientResponse response = httpClientRule.get("price/" + product.getId())) {
+            verify(productService).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.OK);
         }
     }
@@ -96,6 +113,7 @@ public class TestProductController {
     @Test
     public void shouldReturnNotFoundWhenPassingNonexistentWorkspace() {
         try (CloseableClientResponse response = httpClientRule.get("price/nonexistentWorkspace/anyId")) {
+            verify(productService, never()).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.NOT_FOUND, DOCUMENT_NOT_FOUND);
         }
     }
@@ -114,7 +132,10 @@ public class TestProductController {
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
+        when(productService.computePrice(null)).thenThrow(new NuxeoException());
+
         try (CloseableClientResponse response = httpClientRule.get("price/" + workspace.getName() + "/" + file.getName())) {
+            verify(productService).computePrice(null);
             assertResponse(response, Response.Status.BAD_REQUEST);
             logCaptureResult.assertHasEvent();
         }
@@ -133,7 +154,10 @@ public class TestProductController {
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
+        when(productService.computePrice(any(NxProductAdapter.class))).thenReturn(2.0);
+
         try (CloseableClientResponse response = httpClientRule.get("price/" + workspace.getName() + "/" + product.getName())) {
+            verify(productService).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.OK);
         }
     }
