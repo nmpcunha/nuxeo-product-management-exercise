@@ -12,5 +12,3 @@ Nuxeo-Component: OSGI-INF/services/productservice-service.xml,
  OSGI-INF/listeners/deprecatedproduct-listener-contrib.xml,
  OSGI-INF/extensions/filemanager/visual-importer-contrib.xml
 Nuxeo-WebModule: org.nuxeo.onboarding.exercise.rest.ProductApplication; name=product;extends=base;package=org/nuxeo/onboarding/exercise/rest
-
-

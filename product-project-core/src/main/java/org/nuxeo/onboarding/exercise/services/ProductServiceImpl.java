@@ -1,4 +1,26 @@
+/*
+ * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Contributors:
+ *      nuno
+ */
+
 package org.nuxeo.onboarding.exercise.services;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,25 +33,23 @@ import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ProductServiceImpl extends DefaultComponent implements ProductService {
 
     private static final Log log = LogFactory.getLog(ProductServiceImpl.class);
 
     private static final String NO_IDENTIFIER = "A Product Pricing Contribution arrived without identifier: %s";
+
     private static final String NULL_DOCUMENT_ADAPTER = "A NULL Document Adapter was received. This means that the original Document Model's type was not '%s'";
 
     private static final String CONTRIBUTION_LOADED = "The following contribution was loaded by Product Service: %s";
+
     private static final String CONTRIBUTION_UNLOADED = "The following contribution was unloaded by Product Service: %s";
 
     private Map<String, ProductPricingDescriptor> productPricing;
 
     /**
-     * Component activated notification.
-     * Called when the component is activated. All component dependencies are resolved at that moment.
-     * Use this method to initialize the component.
+     * Component activated notification. Called when the component is activated. All component dependencies are resolved
+     * at that moment. Use this method to initialize the component.
      *
      * @param context the component context.
      */
@@ -40,9 +60,8 @@ public class ProductServiceImpl extends DefaultComponent implements ProductServi
     }
 
     /**
-     * Component deactivated notification.
-     * Called before a component is unregistered.
-     * Use this method to do cleanup if any and free any resources held by the component.
+     * Component deactivated notification. Called before a component is unregistered. Use this method to do cleanup if
+     * any and free any resources held by the component.
      *
      * @param context the component context.
      */
@@ -90,11 +109,6 @@ public class ProductServiceImpl extends DefaultComponent implements ProductServi
             return getPriceWithTaxes(price, countryPricing.getTaxes());
         }
         return price;
-    }
-
-    @Override
-    public ProductPricingDescriptor getPricingDescriptor(String pricingDescriptorIdentifier) {
-        return productPricing.get(pricingDescriptorIdentifier);
     }
 
     private ProductPricingDescriptor findPricingDescriptorByCountry(String country) {

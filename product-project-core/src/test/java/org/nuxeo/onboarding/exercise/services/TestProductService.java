@@ -1,4 +1,29 @@
+/*
+ * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Contributors:
+ *      nuno
+ */
+
 package org.nuxeo.onboarding.exercise.services;
+
+import static org.junit.Assert.*;
+
+import java.util.Arrays;
+
+import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,13 +35,6 @@ import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-import org.nuxeo.runtime.test.runner.HotDeployer;
-
-import javax.inject.Inject;
-import java.util.Arrays;
-
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features(OnboardingFeature.class)
@@ -27,9 +45,6 @@ public class TestProductService {
 
     @Inject
     private CoreSession coreSession;
-
-    @Inject
-    private HotDeployer deployer;
 
     @Test
     public void shouldBeUpAndRunning() {
@@ -67,29 +82,6 @@ public class TestProductService {
 
         assertNotNull(computedPrice);
         assertEquals(new Double(186.0), computedPrice);
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenInvalidContributionIsLoaded() {
-        try {
-            deployer.deploy("org.nuxeo.onboarding.exercise.product-project-core:OSGI-INF/test/invalid-contrib.xml");
-            assertNull(productservice.getPricingDescriptor(null));
-            assertNull(productservice.getPricingDescriptor(""));
-        } catch (Exception e) {
-            // It is not throwing the exception in sync mode... How should I validate this?
-            assertThat(e, instanceOf(NuxeoException.class));
-        }
-    }
-
-    //TODO How to unregister contributions?
-
-    @Test
-    public void shouldContainLoadedContributions() {
-        ProductPricingDescriptor asianContribution = productservice.getPricingDescriptor("southernAsia");
-        assertAsianContribution(asianContribution);
-
-        ProductPricingDescriptor americanContribution = productservice.getPricingDescriptor("northAmerica");
-        assertAmericanContribution(americanContribution);
     }
 
     private void assertAsianContribution(ProductPricingDescriptor asianContribution) {

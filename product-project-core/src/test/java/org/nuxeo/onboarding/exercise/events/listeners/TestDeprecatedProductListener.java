@@ -1,4 +1,30 @@
+/*
+ * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Contributors:
+ *      nuno
+ */
+
 package org.nuxeo.onboarding.exercise.events.listeners;
+
+import static org.junit.Assert.*;
+
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +45,6 @@ import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features(OnboardingFeature.class)
@@ -71,7 +91,8 @@ public class TestDeprecatedProductListener {
         product.save();
         product.addVisual(visual);
 
-        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
+        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
+                product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
 
         DocumentModel parent = session.getParentDocument(visual.getRef());
@@ -93,7 +114,8 @@ public class TestDeprecatedProductListener {
         product.save();
         product.addVisual(visual);
 
-        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
+        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
+                product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
 
         DocumentModel folder = session.getParentDocument(visual.getRef());
@@ -104,7 +126,6 @@ public class TestDeprecatedProductListener {
         assertEquals("Group1", acEs[0].getUsername());
         assertEquals(SecurityConstants.READ, acEs[0].getPermission());
         assertFalse(acEs[0].isGranted());
-
 
         DocumentModel newUser = userManager.getBareUserModel();
         newUser.setProperty("user", "username", "authorizedUser");
@@ -136,7 +157,8 @@ public class TestDeprecatedProductListener {
         product.save();
         product.addVisual(visual);
 
-        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(), product.getDocumentModel());
+        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
+                product.getDocumentModel());
         eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
 
         DocumentModel folder = session.getParentDocument(visual.getRef());
@@ -148,7 +170,6 @@ public class TestDeprecatedProductListener {
         assertEquals(SecurityConstants.READ, acEs[0].getPermission());
         assertFalse(acEs[0].isGranted());
 
-
         DocumentModel newUser = userManager.getBareUserModel();
         newUser.setProperty("user", "username", "unauthorizedUser");
         userManager.createUser(newUser);
@@ -156,7 +177,6 @@ public class TestDeprecatedProductListener {
         DocumentModel newGroup = userManager.getBareGroupModel();
         newGroup.setProperty("group", "groupname", acEs[0].getUsername());
         userManager.createGroup(newGroup);
-
 
         NuxeoPrincipal unauthorizedUser = userManager.getPrincipal("unauthorizedUser");
         unauthorizedUser.setGroups(Collections.singletonList(acEs[0].getUsername()));

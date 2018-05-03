@@ -1,4 +1,29 @@
+/*
+ * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Contributors:
+ *      nuno
+ */
+
 package org.nuxeo.onboarding.exercise.utils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.core.api.Blob;
@@ -9,12 +34,6 @@ import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SampleGenerator {
 
@@ -65,7 +84,8 @@ public class SampleGenerator {
     }
 
     public static NxProductAdapter getEuropeanProduct(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "epn", ProductDocumentTypes.PRODUCT.getName());
+        DocumentModel doc = coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "epn",
+                ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
         product.setTitle("Sample European Product");

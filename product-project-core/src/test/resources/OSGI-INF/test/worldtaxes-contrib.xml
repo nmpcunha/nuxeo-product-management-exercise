@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <component name="org.nuxeo.onboarding.exercise.extensions.worldtaxes-contrib">
 
     <extension target="org.nuxeo.onboarding.exercise.services.ProductService" point="productPricing">

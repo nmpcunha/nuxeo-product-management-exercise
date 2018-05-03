@@ -1,6 +1,33 @@
+/*
+ * (C) Copyright 2018 Nuxeo (http://nuxeo.com/) and others.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ *  Contributors:
+ *      nuno
+ */
+
 package org.nuxeo.onboarding.exercise.rest;
 
-import com.sun.jersey.api.client.ClientResponse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+import static org.nuxeo.onboarding.exercise.rest.ProductController.DOCUMENT_NOT_FOUND;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,18 +52,10 @@ import org.nuxeo.runtime.test.runner.Jetty;
 import org.nuxeo.runtime.test.runner.LogCaptureFeature;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.nuxeo.onboarding.exercise.rest.ProductController.DOCUMENT_NOT_FOUND;
-
+import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(FeaturesRunner.class)
-@Features({RestServerFeature.class, OnboardingFeature.class})
+@Features({ RestServerFeature.class, OnboardingFeature.class })
 @Jetty(port = 18090)
 @RepositoryConfig(cleanup = Granularity.METHOD)
 public class TestProductController {
@@ -54,10 +73,9 @@ public class TestProductController {
     private ProductService productService;
 
     @Rule
-    public HttpClientTestRule httpClientRule = new HttpClientTestRule.Builder()
-            .adminCredentials()
-            .url(ENDPOINT_BASE_URL)
-            .build();
+    public HttpClientTestRule httpClientRule = new HttpClientTestRule.Builder().adminCredentials()
+                                                                               .url(ENDPOINT_BASE_URL)
+                                                                               .build();
 
     @Test
     public void shouldReturnOkWhenServerIsUpAndHealthy() {
@@ -76,7 +94,8 @@ public class TestProductController {
 
     @Test
     @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.rest.ProductController")
-    public void shouldReturnBadRequestWhenPassingNotProductTypeDocumentId() throws LogCaptureFeature.NoLogCaptureFilterException {
+    public void shouldReturnBadRequestWhenPassingNotProductTypeDocumentId()
+            throws LogCaptureFeature.NoLogCaptureFilterException {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.create();
         visual.save();
@@ -120,7 +139,8 @@ public class TestProductController {
 
     @Test
     @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.rest.ProductController")
-    public void shouldReturnBadRequestWhenPassingNotProductTypeDocumentRef() throws LogCaptureFeature.NoLogCaptureFilterException {
+    public void shouldReturnBadRequestWhenPassingNotProductTypeDocumentRef()
+            throws LogCaptureFeature.NoLogCaptureFilterException {
         DocumentModel workspace = SampleGenerator.getWorkspace(session);
         workspace = session.createDocument(workspace);
         workspace = session.saveDocument(workspace);
@@ -134,7 +154,8 @@ public class TestProductController {
 
         when(productService.computePrice(null)).thenThrow(new NuxeoException());
 
-        try (CloseableClientResponse response = httpClientRule.get("price/" + workspace.getName() + "/" + file.getName())) {
+        try (CloseableClientResponse response = httpClientRule.get(
+                "price/" + workspace.getName() + "/" + file.getName())) {
             verify(productService).computePrice(null);
             assertResponse(response, Response.Status.BAD_REQUEST);
             logCaptureResult.assertHasEvent();
@@ -156,7 +177,8 @@ public class TestProductController {
 
         when(productService.computePrice(any(NxProductAdapter.class))).thenReturn(2.0);
 
-        try (CloseableClientResponse response = httpClientRule.get("price/" + workspace.getName() + "/" + product.getName())) {
+        try (CloseableClientResponse response = httpClientRule.get(
+                "price/" + workspace.getName() + "/" + product.getName())) {
             verify(productService).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.OK);
         }
