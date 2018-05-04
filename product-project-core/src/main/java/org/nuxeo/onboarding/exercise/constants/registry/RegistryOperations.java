@@ -17,7 +17,23 @@
  *      nuno
  */
 
-package org.nuxeo.onboarding.exercise.extensions;
+package org.nuxeo.onboarding.exercise.constants.registry;
 
-public class GlobalConfigDescriptor {
+public enum RegistryOperations {
+
+    LOADED("loaded"),
+    MERGED("merged"),
+    UNKNOWN("not known"),
+    UNLOADED("unloaded");
+
+    private String description;
+
+    RegistryOperations(String description){
+        this.description = description;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
 }

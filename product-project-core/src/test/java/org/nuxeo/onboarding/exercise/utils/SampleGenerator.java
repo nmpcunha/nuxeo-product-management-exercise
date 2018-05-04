@@ -22,6 +22,7 @@ package org.nuxeo.onboarding.exercise.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
+import org.nuxeo.onboarding.exercise.extensions.ProductPricingDescriptor;
 
 public class SampleGenerator {
 
@@ -135,5 +137,27 @@ public class SampleGenerator {
     public static Blob getPngBlob() throws IOException {
         File sample = new File(FileUtils.getResourcePathFromContext("test-data/sample.png"));
         return Blobs.createBlob(sample, "image/png");
+    }
+
+    public static ProductPricingDescriptor getProductPricingDescriptor(String country, Map<String, Double> taxes) {
+        ProductPricingDescriptor descriptor = new ProductPricingDescriptor();
+
+        try {
+            Field countryField = descriptor.getClass().getDeclaredField("country");
+            if (countryField != null) {
+                countryField.setAccessible(true);
+                countryField.set(descriptor, country);
+            }
+
+            Field taxesField = descriptor.getClass().getDeclaredField("taxes");
+            if (taxesField != null) {
+                taxesField.setAccessible(true);
+                taxesField.set(descriptor, taxes);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        return descriptor;
     }
 }

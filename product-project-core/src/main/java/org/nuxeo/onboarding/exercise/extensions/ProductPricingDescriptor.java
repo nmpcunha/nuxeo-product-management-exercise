@@ -19,13 +19,11 @@
 
 package org.nuxeo.onboarding.exercise.extensions;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.nuxeo.common.xmap.annotation.XNode;
-import org.nuxeo.common.xmap.annotation.XNodeList;
 import org.nuxeo.common.xmap.annotation.XNodeMap;
 import org.nuxeo.common.xmap.annotation.XObject;
 
@@ -35,35 +33,60 @@ import org.nuxeo.common.xmap.annotation.XObject;
 @XObject("productPricing")
 public class ProductPricingDescriptor {
 
-    @XNode("@id")
-    private String productPricingId;
+    @XNode("country")
+    private String country;
 
     @XNodeMap(value = "taxes/tax", key = "@name", type = HashMap.class, componentType = Double.class)
     private Map<String, Double> taxes;
 
-    @XNodeList(value = "country", type = ArrayList.class, componentType = String.class)
-    private List<String> countries;
-
     public ProductPricingDescriptor() {
         taxes = new HashMap<>();
-        countries = new ArrayList<>();
     }
 
-    public String getProductPricingIdentifier() {
-        return productPricingId;
+    public String getCountry() {
+        return country;
     }
 
     public Map<String, Double> getTaxes() {
         return taxes;
     }
 
-    public List<String> getCountries() {
-        return countries;
+    @Override
+    public String toString() {
+        return "ProductPricingDescriptor{" + "country='" + country + '\'' + ", taxes=" + taxes.toString() + '}';
     }
 
     @Override
-    public String toString() {
-        return "ProductPricingDescriptor{" + "productPricingId='" + productPricingId + '\'' + ", taxes=" + taxes
-                + ", countries=" + countries + '}';
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ProductPricingDescriptor that = (ProductPricingDescriptor) o;
+        return Objects.equals(country, that.country) && Objects.equals(taxes, that.taxes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(country, taxes);
+    }
+
+    public ProductPricingDescriptor clone() {
+        ProductPricingDescriptor descriptor = new ProductPricingDescriptor();
+        descriptor.country = country;
+        descriptor.taxes = new HashMap<>(taxes);
+        return descriptor;
+    }
+
+    public void merge(ProductPricingDescriptor other) {
+        if (other.getTaxes() != null) {
+            mergeTaxes(other.getTaxes());
+        }
+    }
+
+    private void mergeTaxes(Map<String, Double> taxes) {
+        taxes.keySet().forEach(tax -> this.taxes.put(tax, taxes.get(tax)));
     }
 }

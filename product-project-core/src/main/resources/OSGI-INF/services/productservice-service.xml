@@ -14,11 +14,4 @@
         </documentation>
         <object class="org.nuxeo.onboarding.exercise.extensions.ProductPricingDescriptor"/>
     </extension-point>
-    <extension-point name="configuration">
-        <documentation>
-            This extension can be used to configure product service
-        </documentation>
-        <object class="org.nuxeo.onboarding.exercise.extensions.GlobalConfigDescriptor"/>
-    </extension-point>
-
 </component>
