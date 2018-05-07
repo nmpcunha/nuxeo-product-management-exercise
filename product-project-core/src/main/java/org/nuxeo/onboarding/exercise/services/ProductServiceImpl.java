@@ -80,7 +80,8 @@ public class ProductServiceImpl extends DefaultComponent implements ProductServi
         ProductPricingDescriptor pricing = (ProductPricingDescriptor) contribution;
         if (pricing.getCountry() == null) {
             throw new NuxeoException(String.format(INVALID_CONTRIBUTION_MISSING_COUNTRY, pricing.toString()));
-        } else if (pricing.getTaxes() == null || pricing.getTaxes().values().contains(null)) {
+        } else if (pricing.getTaxes() == null || pricing.getTaxes().size() == 0
+                || pricing.getTaxes().values().contains(null)) {
             throw new NuxeoException(String.format(INVALID_CONTRIBUTION_MISSING_TAXES, pricing.toString()));
         }
         return pricing;

@@ -131,8 +131,8 @@ public class TestDeprecatedProductListener {
         newUser.setProperty("user", "username", "authorizedUser");
         userManager.createUser(newUser);
 
-        NuxeoPrincipal authorizedUser = userManager.getPrincipal("authorizedUser");
-        authorizedUser.setGroups(Collections.singletonList("administrators"));
+        NuxeoPrincipal authorizedUser = userManager.getPrincipal("Administrator");
+        //authorizedUser.setGroups(Collections.singletonList("administrators"));
         userManager.updateUser(authorizedUser.getModel());
 
         CoreSession userSession = CoreInstance.openCoreSession(session.getRepositoryName(), authorizedUser);

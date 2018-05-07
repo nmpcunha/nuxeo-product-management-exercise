@@ -4,11 +4,6 @@
 
     <extension target="org.nuxeo.onboarding.exercise.services.ProductService" point="productPricing">
         <productPricing>
-            <taxes>
-                <tax name="VAT">0.21</tax>
-            </taxes>
-        </productPricing>
-        <productPricing>
             <country>Bahamas</country>
         </productPricing>
     </extension>
