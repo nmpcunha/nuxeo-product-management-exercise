@@ -17,10 +17,13 @@
  *      nuno
  */
 
-package org.nuxeo.onboarding.exercise.utils;
+package org.nuxeo.onboarding.exercise.utils.features;
 
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.test.TransactionalFeature;
+import org.nuxeo.ecm.core.test.annotations.Granularity;
+import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
+import org.nuxeo.onboarding.exercise.utils.repositories.OnboardingRepositoryInit;
 import org.nuxeo.runtime.mockito.MockitoFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -31,5 +34,6 @@ import org.nuxeo.runtime.test.runner.SimpleFeature;
 @Deploy({ "org.nuxeo.ecm.platform.tag", "org.nuxeo.ecm.platform.collections.core" })
 @Deploy({ "org.nuxeo.onboarding.exercise.product-project-core", "studio.extensions.ncunha-SANDBOX" })
 @Deploy("org.nuxeo.onboarding.exercise.product-project-core:OSGI-INF/extensions/worldtaxes-contrib.xml")
+@RepositoryConfig(init = OnboardingRepositoryInit.class, cleanup = Granularity.METHOD)
 public class OnboardingFeature extends SimpleFeature {
 }

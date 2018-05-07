@@ -37,8 +37,8 @@ import org.nuxeo.ecm.core.api.DocumentNotFoundException;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.onboarding.exercise.constants.model.NxProduct;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
@@ -67,8 +67,8 @@ public class TestNxProductAdapter {
 
     @Test(expected = DocumentNotFoundException.class)
     public void shouldThrowExceptionWhenDocumentIsNotCreated() {
-        SampleGenerator.getAsianProduct(session).save();
-        // Should we just verify that the method is called?
+        NxProductAdapter asianProduct = SampleGenerator.getAsianProduct(session);
+        asianProduct.save();
     }
 
     @Test
@@ -95,11 +95,9 @@ public class TestNxProductAdapter {
     public void shouldStoreWhenTryingToAddVisualDocumentToCollection() {
         NxVisualAdapter nxVisual = SampleGenerator.getVisual(session);
         nxVisual.create();
-        nxVisual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
-        product.save();
         product.addVisual(nxVisual);
 
         List<DocumentRef> visuals = product.getVisuals();

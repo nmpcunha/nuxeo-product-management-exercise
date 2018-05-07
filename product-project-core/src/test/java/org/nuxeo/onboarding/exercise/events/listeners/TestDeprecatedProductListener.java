@@ -39,9 +39,10 @@ import org.nuxeo.ecm.core.storage.sql.coremodel.SQLSession;
 import org.nuxeo.ecm.platform.usermanager.UserManager;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
+import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.events.ProductEvents;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -67,7 +68,7 @@ public class TestDeprecatedProductListener {
     }
 
     @Test
-    public void listenerRegistration() {
+    public void shouldBeRegistered() {
         EventListenerDescriptor listener = eventService.getEventListener("deprecatedproduct");
         assertNotNull(listener);
         assertTrue(events.stream().allMatch(listener::acceptEvent));
@@ -81,14 +82,12 @@ public class TestDeprecatedProductListener {
     }
 
     @Test
-    public void shouldMoveVisualsWhenDocumentIsProduct() {
+    public void shouldCreateFolderAndMoveVisualsWhenDocumentIsProduct() {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.create();
-        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
-        product.save();
         product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
@@ -98,20 +97,44 @@ public class TestDeprecatedProductListener {
         DocumentModel parent = session.getParentDocument(visual.getRef());
 
         assertNotNull(parent);
-        assertEquals("Folder", parent.getType());
+        assertEquals(ProductDocumentTypes.FOLDER.getName(), parent.getType());
         assertTrue(parent.isFolder());
         assertEquals("hiddenFolder", parent.getName());
+    }
+
+    @Test
+    public void shouldReuseFolderAndMoveVisualsWhenDocumentIsProduct() {
+        DocumentModel folder = session.createDocumentModel(SampleGenerator.WORKSPACE_PATH, "hiddenFolder",
+                ProductDocumentTypes.FOLDER.getName());
+        folder = session.createDocument(folder);
+
+        NxVisualAdapter visual = SampleGenerator.getVisual(session);
+        visual.create();
+
+        NxProductAdapter product = SampleGenerator.getAsianProduct(session);
+        product.create();
+        product.addVisual(visual);
+
+        DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
+                product.getDocumentModel());
+        eventService.fireEvent(ctx.newEvent(ProductEvents.DEPRECATED.getIdentifier()));
+
+        DocumentModel parent = session.getParentDocument(visual.getRef());
+
+        assertNotNull(parent);
+        assertEquals(ProductDocumentTypes.FOLDER.getName(), parent.getType());
+        assertTrue(parent.isFolder());
+
+        assertEquals(folder, parent);
     }
 
     @Test
     public void shouldAccessFolderWhenAuthorized() {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.create();
-        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
-        product.save();
         product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),
@@ -129,17 +152,17 @@ public class TestDeprecatedProductListener {
 
         DocumentModel newUser = userManager.getBareUserModel();
         newUser.setProperty("user", "username", "authorizedUser");
+        newUser.setProperty("user", "groups", Collections.singletonList("administrators"));
         userManager.createUser(newUser);
 
-        NuxeoPrincipal authorizedUser = userManager.getPrincipal("Administrator");
-        //authorizedUser.setGroups(Collections.singletonList("administrators"));
+        NuxeoPrincipal authorizedUser = userManager.getPrincipal("authorizedUser");
         userManager.updateUser(authorizedUser.getModel());
 
         CoreSession userSession = CoreInstance.openCoreSession(session.getRepositoryName(), authorizedUser);
 
         DocumentModel document = userSession.getDocument(folder.getRef());
         assertNotNull(document);
-        assertEquals("Folder", document.getType());
+        assertEquals(ProductDocumentTypes.FOLDER.getName(), document.getType());
         assertTrue(document.isFolder());
         assertEquals("hiddenFolder", document.getName());
 
@@ -150,11 +173,9 @@ public class TestDeprecatedProductListener {
     public void shouldThrowExceptionWhenTryingToAccessFolderWithUnauthorizedUsers() {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.create();
-        visual.save();
 
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
-        product.save();
         product.addVisual(visual);
 
         DocumentEventContext ctx = new DocumentEventContext(session, session.getPrincipal(),

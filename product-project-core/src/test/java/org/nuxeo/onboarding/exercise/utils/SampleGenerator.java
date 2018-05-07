@@ -39,8 +39,11 @@ import org.nuxeo.onboarding.exercise.extensions.ProductPricingDescriptor;
 
 public class SampleGenerator {
 
+    public static final String WORKSPACE_PATH = "/default-domain/workspaces/sampleWorkspace";
+
     public static NxProductAdapter getAsianProduct(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/", "apn", ProductDocumentTypes.PRODUCT.getName());
+        DocumentModel doc = coreSession.createDocumentModel(WORKSPACE_PATH, "apn",
+                ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
         Map<String, Serializable> distributor = new HashMap<>();
@@ -63,7 +66,8 @@ public class SampleGenerator {
     }
 
     public static NxProductAdapter getAmericanProduct(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/", "upn", ProductDocumentTypes.PRODUCT.getName());
+        DocumentModel doc = coreSession.createDocumentModel(WORKSPACE_PATH, "upn",
+                ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
         Map<String, Serializable> distributor = new HashMap<>();
@@ -86,7 +90,7 @@ public class SampleGenerator {
     }
 
     public static NxProductAdapter getEuropeanProduct(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "epn",
+        DocumentModel doc = coreSession.createDocumentModel(WORKSPACE_PATH, "epn",
                 ProductDocumentTypes.PRODUCT.getName());
         NxProductAdapter product = doc.getAdapter(NxProductAdapter.class);
 
@@ -116,7 +120,8 @@ public class SampleGenerator {
     }
 
     public static NxVisualAdapter getVisual(CoreSession coreSession) {
-        DocumentModel doc = coreSession.createDocumentModel("/", "visual", ProductDocumentTypes.VISUAL.getName());
+        DocumentModel doc = coreSession.createDocumentModel(WORKSPACE_PATH, "visual",
+                ProductDocumentTypes.VISUAL.getName());
         NxVisualAdapter visual = doc.getAdapter(NxVisualAdapter.class);
 
         visual.setTitle("Visual Product");
@@ -127,11 +132,7 @@ public class SampleGenerator {
     }
 
     public static DocumentModel getFile(CoreSession coreSession) {
-        return coreSession.createDocumentModel("/default-domain/workspaces/sampleWorkspace", "sampleFile", "File");
-    }
-
-    public static DocumentModel getWorkspace(CoreSession coreSession) {
-        return coreSession.createDocumentModel("/default-domain/workspaces/", "sampleWorkspace", "Workspace");
+        return coreSession.createDocumentModel(WORKSPACE_PATH, "sampleFile", ProductDocumentTypes.FILE.getName());
     }
 
     public static Blob getPngBlob() throws IOException {

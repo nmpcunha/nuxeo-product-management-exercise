@@ -19,6 +19,7 @@
 
 package org.nuxeo.onboarding.exercise.events.listeners;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.nuxeo.ecm.core.api.*;
@@ -37,7 +38,13 @@ public class DeprecatedProductListener implements EventListener {
 
     private static final String UNEXPECTED_DOCUMENT_TYPE = "An unexpected Document Type '%s' was received when expecting '%s'";
 
-    private static final String HIDDEN_FOLDER_PATH_REF = "/hiddenFolder";
+    private static final String HIDDEN_FOLDER_PARENT_PATH_REF = "/default-domain/workspaces/sampleWorkspace";
+
+    private static final String HIDDEN_FOLDER_NAME = "hiddenFolder";
+
+    private static final String GROUP_NAME = "Group1";
+
+    private static final String POLICY_NAME = "onboarding";
 
     @Override
     public void handleEvent(Event event) {
@@ -51,7 +58,8 @@ public class DeprecatedProductListener implements EventListener {
 
         if (!doc.getType().equals(ProductDocumentTypes.PRODUCT.getName())) {
             event.markBubbleException();
-            throw new NuxeoException(String.format(UNEXPECTED_DOCUMENT_TYPE, doc.getType(), ProductDocumentTypes.PRODUCT.getName()));
+            throw new NuxeoException(
+                    String.format(UNEXPECTED_DOCUMENT_TYPE, doc.getType(), ProductDocumentTypes.PRODUCT.getName()));
         }
 
         List<DocumentRef> documentRefs = doc.getAdapter(NxProductAdapter.class).getVisuals();
@@ -60,7 +68,8 @@ public class DeprecatedProductListener implements EventListener {
     }
 
     private DocumentRef createOrGetHiddenFolder(CoreSession session) {
-        DocumentRef ref = new PathRef(HIDDEN_FOLDER_PATH_REF);
+        DocumentRef ref = new PathRef(
+                String.join("/", Arrays.asList(HIDDEN_FOLDER_PARENT_PATH_REF, HIDDEN_FOLDER_NAME)));
         if (!session.exists(ref)) {
             return createFolder(session);
         }
@@ -68,7 +77,8 @@ public class DeprecatedProductListener implements EventListener {
     }
 
     private DocumentRef createFolder(CoreSession session) {
-        DocumentModel folder = session.createDocumentModel("/", "hiddenFolder", "Folder");
+        DocumentModel folder = session.createDocumentModel(HIDDEN_FOLDER_PARENT_PATH_REF, HIDDEN_FOLDER_NAME,
+                ProductDocumentTypes.FOLDER.getName());
         folder = session.createDocument(folder);
         folder.setACP(getPermissions(), true);
         return folder.getRef();
@@ -76,7 +86,7 @@ public class DeprecatedProductListener implements EventListener {
 
     private ACP getPermissions() {
         ACP acp = new ACPImpl();
-        acp.addACE("onboarding", new ACE("Group1", SecurityConstants.READ, false));
+        acp.addACE(POLICY_NAME, new ACE(GROUP_NAME, SecurityConstants.READ, false));
         return acp;
     }
 }

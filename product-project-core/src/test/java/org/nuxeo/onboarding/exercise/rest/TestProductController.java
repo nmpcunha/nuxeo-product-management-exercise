@@ -35,16 +35,14 @@ import org.mockito.Mock;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.ecm.core.test.annotations.Granularity;
-import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.restapi.test.RestServerFeature;
 import org.nuxeo.jaxrs.test.CloseableClientResponse;
 import org.nuxeo.jaxrs.test.HttpClientTestRule;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
 import org.nuxeo.onboarding.exercise.services.ProductService;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -57,7 +55,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(FeaturesRunner.class)
 @Features({ RestServerFeature.class, OnboardingFeature.class })
 @Jetty(port = 18090)
-@RepositoryConfig(cleanup = Granularity.METHOD)
 public class TestProductController {
 
     private final String ENDPOINT_BASE_URL = "http://localhost:18090/product";
@@ -98,7 +95,6 @@ public class TestProductController {
             throws LogCaptureFeature.NoLogCaptureFilterException {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.create();
-        visual.save();
 
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
@@ -116,7 +112,6 @@ public class TestProductController {
     public void shouldReturnOkWhenPassingExistingProductDocumentId() {
         NxProductAdapter product = SampleGenerator.getAsianProduct(session);
         product.create();
-        product.save();
 
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
@@ -141,9 +136,6 @@ public class TestProductController {
     @LogCaptureFeature.FilterOn(logLevel = "WARN", loggerName = "org.nuxeo.onboarding.exercise.rest.ProductController")
     public void shouldReturnBadRequestWhenPassingNotProductTypeDocumentRef()
             throws LogCaptureFeature.NoLogCaptureFilterException {
-        DocumentModel workspace = SampleGenerator.getWorkspace(session);
-        workspace = session.createDocument(workspace);
-        workspace = session.saveDocument(workspace);
 
         DocumentModel file = SampleGenerator.getFile(session);
         file = session.createDocument(file);
@@ -154,8 +146,7 @@ public class TestProductController {
 
         when(productService.computePrice(null)).thenThrow(new NuxeoException());
 
-        try (CloseableClientResponse response = httpClientRule.get(
-                "price/" + workspace.getName() + "/" + file.getName())) {
+        try (CloseableClientResponse response = httpClientRule.get("price/sampleWorkspace/" + file.getName())) {
             verify(productService).computePrice(null);
             assertResponse(response, Response.Status.BAD_REQUEST);
             logCaptureResult.assertHasEvent();
@@ -164,21 +155,15 @@ public class TestProductController {
 
     @Test
     public void shouldReturnOkWhenPassingExistingProductWorkspaceAndDocumentRef() {
-        DocumentModel workspace = SampleGenerator.getWorkspace(session);
-        workspace = session.createDocument(workspace);
-        workspace = session.saveDocument(workspace);
-
         NxProductAdapter product = SampleGenerator.getEuropeanProduct(session);
         product.create();
-        product.save();
 
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
         when(productService.computePrice(any(NxProductAdapter.class))).thenReturn(2.0);
 
-        try (CloseableClientResponse response = httpClientRule.get(
-                "price/" + workspace.getName() + "/" + product.getName())) {
+        try (CloseableClientResponse response = httpClientRule.get("price/sampleWorkspace/" + product.getName())) {
             verify(productService).computePrice(any(NxProductAdapter.class));
             assertResponse(response, Response.Status.OK);
         }

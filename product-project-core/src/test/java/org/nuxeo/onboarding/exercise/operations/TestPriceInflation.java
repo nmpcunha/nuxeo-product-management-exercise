@@ -51,7 +51,7 @@ import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.constants.ProductDocumentTypes;
 import org.nuxeo.onboarding.exercise.services.ProductService;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.mockito.RuntimeService;
 import org.nuxeo.runtime.test.runner.Features;
@@ -60,7 +60,6 @@ import org.nuxeo.runtime.test.runner.LogCaptureFeature;
 
 @RunWith(FeaturesRunner.class)
 @Features(OnboardingFeature.class)
-@RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
 public class TestPriceInflation {
 
     private static final Double INFLATION_RATE = 0.10;

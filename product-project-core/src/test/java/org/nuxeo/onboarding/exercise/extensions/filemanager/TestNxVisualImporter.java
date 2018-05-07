@@ -35,8 +35,9 @@ import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.platform.filemanager.api.FileManager;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.adapters.model.NxVisualAdapter;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
+import org.nuxeo.onboarding.exercise.utils.repositories.OnboardingRepositoryInit;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -48,7 +49,6 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
 @Features(OnboardingFeature.class)
 @Deploy("org.nuxeo.ecm.platform.filemanager.api")
 @Deploy("org.nuxeo.ecm.platform.filemanager.core")
-@RepositoryConfig(cleanup = Granularity.METHOD)
 public class TestNxVisualImporter {
 
     @Inject
@@ -74,14 +74,13 @@ public class TestNxVisualImporter {
         NxVisualAdapter visual = SampleGenerator.getVisual(session);
         visual.setTitle("sample.png");
         visual.create();
-        visual.save();
 
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
         Blob blob = SampleGenerator.getPngBlob();
 
-        DocumentModel documentModel = fileManager.createDocumentFromBlob(session, blob, "/", true, blob.getFile().getCanonicalPath());
+        DocumentModel documentModel = fileManager.createDocumentFromBlob(session, blob, SampleGenerator.WORKSPACE_PATH, true, blob.getFile().getCanonicalPath());
         assertNotNull(documentModel);
 
         assertEquals(visual.getId(), documentModel.getId());
@@ -93,14 +92,13 @@ public class TestNxVisualImporter {
         NxProductAdapter product = SampleGenerator.getAmericanProduct(session);
         product.setTitle("sample.png");
         product.create();
-        product.save();
 
         TransactionHelper.commitOrRollbackTransaction();
         TransactionHelper.startTransaction();
 
         Blob blob = SampleGenerator.getPngBlob();
 
-        DocumentModel documentModel = fileManager.createDocumentFromBlob(session, blob, "/", true, blob.getFile().getCanonicalPath());
+        DocumentModel documentModel = fileManager.createDocumentFromBlob(session, blob, SampleGenerator.WORKSPACE_PATH, true, blob.getFile().getCanonicalPath());
         assertNotNull(documentModel);
 
         assertNotEquals(product.getId(), documentModel.getId());

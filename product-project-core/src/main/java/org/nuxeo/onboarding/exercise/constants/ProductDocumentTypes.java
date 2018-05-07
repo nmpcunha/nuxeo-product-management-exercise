@@ -21,8 +21,11 @@ package org.nuxeo.onboarding.exercise.constants;
 
 public enum ProductDocumentTypes {
 
+    FILE("File"),
+    FOLDER("Folder"),
     PRODUCT("nxProduct"),
-    VISUAL("nxVisual");
+    VISUAL("nxVisual"),
+    WORKSPACE("Workspace");
 
     private String name;
 

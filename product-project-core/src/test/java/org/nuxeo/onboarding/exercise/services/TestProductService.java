@@ -35,7 +35,7 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.onboarding.exercise.adapters.model.NxProductAdapter;
 import org.nuxeo.onboarding.exercise.extensions.ProductPricingDescriptor;
 import org.nuxeo.onboarding.exercise.extensions.registries.ProductPricingRegistry;
-import org.nuxeo.onboarding.exercise.utils.OnboardingFeature;
+import org.nuxeo.onboarding.exercise.utils.features.OnboardingFeature;
 import org.nuxeo.onboarding.exercise.utils.SampleGenerator;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
